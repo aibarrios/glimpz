@@ -1,7 +1,7 @@
 {
-  "name": "hotspot",
+  "name": "glimpz",
   "version": "1.0.0",
-  "description": "web application for tourist destinations",
+  "description": "backend for glimpz",
   "main": "server.js",
   "scripts": {
     "start:dev": "nodemon server.js",
