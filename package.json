@@ -1,0 +1,21 @@
+{
+  "name": "hotspot",
+  "version": "1.0.0",
+  "description": "web application for tourist destinations",
+  "main": "server.js",
+  "scripts": {
+    "start:dev": "nodemon server.js",
+    "start:prod": "cross-env NODE_ENV=production nodemon server.js"
+  },
+  "author": "AIBarrios",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "nodemon": "^2.0.15"
+  }
+}
