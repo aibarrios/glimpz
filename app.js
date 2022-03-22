@@ -1,16 +1,29 @@
+//App related configuration here
+
+//We will be using express.js
 const express = require('express');
+
+//morgan is a logger middleware
 const morgan = require('morgan');
+
+//Router modules
 const toursRouter = require('./routes/toursRouter');
 const usersRouter = require('./routes/usersRouter');
-//copy methods / functions to our app
+
 const app = express();
 
 //Request-Response Cycle: Incoming request -> Middleware Stack -> Response
 //Middleware -> a piece of code that can modify the request or response object, it occurs between the request and response event
-//Note the sequence of middlewares is important (FIFO). request and response object is passed to the next middleware until you send a response, which end the request-response cycle
+//Note: The sequence of middlewares is important (FIFO). request and response object is passed to the next middleware until you send a response, which end the request-response cycle
+
+//We will check first if the Node environment is in development then we will use morgan logger middleware
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
-app.use(express.json()); //Express body-parser (JSON to JS Object)
-app.use(express.static(`${__dirname}/public`)); //To serve a file from local folder express.static(<path>);
+
+//express.js body-parser (JSON to JS Object)
+app.use(express.json());
+
+//To serve static file(s) from local folder express.static(<path>);
+app.use(express.static(`${__dirname}/public`));
 
 //Creating custom middleware
 //app.use((req, res, next) => {
@@ -44,7 +57,8 @@ app.use(express.static(`${__dirname}/public`)); //To serve a file from local fol
 //Server error responses
 //500 Internal server error
 
-//Mouting Routers
+//Mounting Routers
+//app.use(<basePath>, <routerToBeApplied>);
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
 

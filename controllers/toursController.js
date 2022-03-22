@@ -1,7 +1,11 @@
-const fs = require('fs');
-const { dirname } = require('path');
-const tours = require('./../localDataRead');
+//App logic for tours router
 
+const fs = require('fs');
+
+//reading our local dev-data as soon as we start our server
+const tours = require('./../utils/localDataRead');
+
+//middleware to check body from POST request, must have both name and price
 exports.checkBody = (req, res, next) => {
   const body = req.body;
   if (!(body.name && body.price)) {
@@ -13,6 +17,7 @@ exports.checkBody = (req, res, next) => {
   next();
 };
 
+//Param middleware (req,res,next,val) => {next()}, check if the url have specific param
 exports.checkID = (req, res, next, val) => {
   // req.params is where all variables (example: id) in the url are stored
   //Check if the ID number is within the range of available number of tours
@@ -27,9 +32,9 @@ exports.checkID = (req, res, next, val) => {
   next();
 };
 
-//jsend format res.status(<statusCode>).send({status: 'success/fail', data: {<dataHere>}})
+//jsend format res.status(<statusCode>).json({status: 'success/fail', data: {<dataHere>}})
 exports.getAllTours = (req, res) => {
-  res.status(200).send({
+  res.status(200).json({
     status: 'success',
     results: tours.length, //not necessary if array length is only one
     data: {
@@ -41,12 +46,12 @@ exports.getAllTours = (req, res) => {
 exports.getTour = (req, res) => {
   const id = req.params.id * 1;
 
-  //Filter tours by the parameter id
+  //Find tour with matching id from tours array
   const tour = tours.find((tour) => {
     return tour.id === id;
   });
 
-  res.status(200).send({
+  res.status(200).json({
     status: 'success',
     data: {
       tour,
@@ -101,7 +106,7 @@ exports.createTour = (req, res) => {
       //this is a guard clause, as soon as we receive an error we wil return the error and close the function call.
       if (error) return error;
       //201
-      res.status(201).send({
+      res.status(201).json({
         status: 'success',
         data: {
           tour: newTour,
