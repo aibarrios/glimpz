@@ -10,7 +10,8 @@
   "author": "AIBarrios",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "mongoose": "^6.2.8"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
