@@ -32,7 +32,15 @@ const Tour = require('../models/toursModel');
 //jsend format res.status(<statusCode>).json({status: 'success/fail', data: {<dataHere>}})
 exports.getAllTours = async (req, res) => {
   try {
-    const tours = await Tour.find();
+    //Check if we have a specific query /api/v1/tours?<key>=<value>...
+    //req.query will return an object containg key=value pair
+    //First we need to make a copy of the object using the Object.assign or the spread operator (ES6)
+    const queryObj = { ...req.query };
+    //Then, we check the properties / keys of the queryObj and delete the said property / key from it.
+    const excludedQuery = ['sort', 'limit', 'page', 'fields'];
+    excludedQuery.forEach((el) => delete queryObj[el]); //delete Obj['<propertyName>'
+    const query = Tour.find(queryObj); //we save it first to query variable, we might do something further
+    const tours = await query;
 
     res.status(200).json({
       status: 'success',
