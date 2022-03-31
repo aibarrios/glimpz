@@ -1,6 +1,7 @@
 //App logic for tours router
 
-const Tour = require('../models/toursModel');
+const Tour = require('./../models/toursModel');
+const APIFeatures = require('./../utils/apiFeatures.js');
 
 //middleware to check body from POST request, must have both name and price
 // exports.checkBody = (req, res, next) => {
@@ -30,17 +31,23 @@ const Tour = require('../models/toursModel');
 // };
 
 //jsend format res.status(<statusCode>).json({status: 'success/fail', data: {<dataHere>}})
+
+exports.aliasTopTours = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
+  next();
+};
+
 exports.getAllTours = async (req, res) => {
   try {
-    //Check if we have a specific query /api/v1/tours?<key>=<value>...
-    //req.query will return an object containg key=value pair
-    //First we need to make a copy of the object using the Object.assign or the spread operator (ES6)
-    const queryObj = { ...req.query };
-    //Then, we check the properties / keys of the queryObj and delete the said property / key from it.
-    const excludedQuery = ['sort', 'limit', 'page', 'fields'];
-    excludedQuery.forEach((el) => delete queryObj[el]); //delete Obj['<propertyName>'
-    const query = Tour.find(queryObj); //we save it first to query variable, we might do something further
-    const tours = await query;
+    //Query
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limit()
+      .paginate();
+    const tours = await features.query;
 
     res.status(200).json({
       status: 'success',
