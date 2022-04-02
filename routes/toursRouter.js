@@ -2,6 +2,7 @@ const express = require('express');
 const toursController = require('./../controllers/toursController');
 const {
   aliasTopTours,
+  getMonthlyPlan,
   getAllTours,
   createTour,
   getTour,
@@ -15,6 +16,7 @@ const router = express.Router();
 // router.param('id', checkID);
 //To chain multiple middlewares for the same route, add them with comma separator, just be mindful of the stack sequence.
 router.route('/top-5-cheap').get(aliasTopTours, getAllTours);
+router.route('/monthly-plan/:year').get(getMonthlyPlan);
 router.route('/').get(getAllTours).post(createTour);
 router.route('/:id').get(getTour).patch(updateTour).delete(deleteTour);
 
