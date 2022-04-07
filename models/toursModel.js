@@ -24,12 +24,28 @@ const tourSchema = new mongoose.Schema({
     required: [true, 'A name is required to create new tour'],
     unique: true,
     trim: true,
+    maxlength: [40, 'Name must have less than or equal to 40 characters'],
+    minlength: [10, 'Name too short'],
+  },
+  privateTour: {
+    type: Boolean,
+    default: false,
   },
   price: {
     type: Number,
     required: [true, 'Please specify a price for this tour'],
   },
-  discount: Number,
+  discount: {
+    type: Number,
+    //Custom validator
+    validate: {
+      validator: function (value) {
+        //NOTE: can only points to current document on NEW document creation
+        return value < this.price;
+      },
+      message: 'Discount price ({VALUE}) should be below regualar price',
+    },
+  },
   duration: {
     type: Number,
     required: [true, 'Please specify the duration of this tour.'],
@@ -37,6 +53,10 @@ const tourSchema = new mongoose.Schema({
   difficulty: {
     type: String,
     required: [true, 'Please specify the difficulty of this tour.'],
+    enum: {
+      values: ['easy', 'medium', 'difficult'],
+      message: 'Difficulty must be set to easy or medium or difficult only',
+    },
   },
   summary: {
     type: String,
@@ -66,11 +86,29 @@ const tourSchema = new mongoose.Schema({
   ratingsAverage: {
     type: Number,
     default: 4.5,
+    min: [1, 'Rating must be more than or equal to 1.0'],
+    max: [5, 'Rating must be less than or equal to 5.0'],
   },
   ratingsQuantity: {
     type: Number,
     default: 0,
   },
+});
+
+//Document Middleware //Note: runs before .save() and .create()
+//tourSchema.pre('save', cbFunc(next){next()})
+//tourSchema.post('save', cbFunc(document, next){})
+
+//Query Middleware
+tourSchema.pre(/^find/, function (next) {
+  this.find({ privateTour: { $ne: true } });
+  next();
+});
+
+//Aggregation Middleware
+tourSchema.pre('aggregate', function (next) {
+  this.pipeline().unshift({ $match: { privateTour: { $ne: true } } });
+  next();
 });
 
 //Creating new model = collection
