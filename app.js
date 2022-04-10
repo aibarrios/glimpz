@@ -6,6 +6,11 @@ const express = require('express');
 //morgan is a logger middleware
 const morgan = require('morgan');
 
+//Operational Error blueprint
+const AppError = require('./utils/appError');
+//Global Operational Error Handler
+const globalErrorHandler = require('./controllers/errorController');
+
 //Router modules
 const toursRouter = require('./routes/toursRouter');
 const usersRouter = require('./routes/usersRouter');
@@ -61,5 +66,18 @@ app.use(express.static(`${__dirname}/public`));
 //app.use(<basePath>, <routerToBeApplied>);
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
+
+//Handles unhandled routes
+app.all('*', (req, res, next) => {
+  const err = new AppError(
+    `Can't find ${req.originalUrl} on this server!`,
+    404
+  );
+
+  next(err);
+});
+
+//Global Error Handling Middleware
+app.use(globalErrorHandler);
 
 module.exports = app;
