@@ -1,5 +1,11 @@
 //Server related configuration here @server.js
 
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT REJECTION! Shutting down...');
+  console.error(err.name, err.message);
+  process.exit(1);
+});
+
 //dotenv for Node environment configuration
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
@@ -11,6 +17,14 @@ const app = require('./app');
 const port = process.env.PORT || 3000;
 
 //start our server by listening to it
-app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Listening to port ${port}...`);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION! Shutting down...');
+  console.error(err.name, err.message);
+  server.close(() => {
+    process.exit(1);
+  });
 });
