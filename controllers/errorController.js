@@ -19,6 +19,15 @@ const handleValidationErrorDB = (err) => {
   return new AppError(message, 404);
 };
 
+const handleJWTError = () =>
+  new AppError(
+    'Invalid token, user not authorized to access this resource',
+    401
+  );
+
+const handleJWTExpiredError = () =>
+  new AppError('Token expired, please login again', 401);
+
 //Development Mode
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -60,6 +69,8 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'CastError') error = handleCastError(error);
     if (err.code === 11000) error = handleDuplicateNameDB(error);
     if (err.name === 'ValidationError') error = handleValidationErrorDB(error);
+    if (err.name === 'JsonWebTokenError') error = handleJWTError();
+    if (err.name === 'TokenExpiredError') error = handleJWTExpiredError();
 
     sendErrorProd(error, res);
   }
