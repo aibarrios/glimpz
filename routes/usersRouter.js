@@ -3,6 +3,8 @@ const express = require('express');
 //import our app logic for this route
 const {
   getAllUsers,
+  updateMe,
+  deleteMe,
   createUser,
   getUser,
   updateUser,
@@ -28,6 +30,8 @@ router.route('/forgotPassword').post(forgotPassword);
 router.route('/resetPassword/:resetToken').patch(resetPassword);
 router.route('/updatePassword').patch(protect, updatePassword);
 
+router.route('/updateMe').patch(protect, updateMe);
+router.route('/deleteMe').delete(protect, deleteMe);
 router.route('/').get(getAllUsers).post(createUser);
 router.route('/:id').get(getUser).patch(updateUser).delete(deleteUser);
 
