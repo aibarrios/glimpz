@@ -6,6 +6,19 @@ const express = require('express');
 //morgan is a logger middleware
 const morgan = require('morgan');
 
+//express-rate-limit to avoid DoS attacks
+const rateLimit = require('express-rate-limit');
+
+//helmet for HTTP Headers Security
+const helmet = require('helmet');
+
+const mongoSanitize = require('express-mongo-sanitize');
+
+const xss = require('xss-clean');
+
+//Prevents paramter pollution
+const hpp = require('hpp');
+
 //Operational Error blueprint
 const AppError = require('./utils/appError');
 //Global Operational Error Handler
@@ -21,11 +34,41 @@ const app = express();
 //Middleware -> a piece of code that can modify the request or response object, it occurs between the request and response event
 //Note: The sequence of middlewares is important (FIFO). request and response object is passed to the next middleware until you send a response, which end the request-response cycle
 
+app.use(helmet());
+
 //We will check first if the Node environment is in development then we will use morgan logger middleware
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 
-//express.js body-parser (JSON to JS Object)
-app.use(express.json());
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: `Too many requests from this IP address, please try again after one (1) hour.`,
+});
+
+app.use('/api', limiter);
+
+//express.js body-parser (JSON to JS Object) - with document size limit
+app.use(express.json({ limit: '10kb' }));
+
+//Data sanitization against NoSQL query injection
+app.use(mongoSanitize());
+
+//Data sanitization against XSS attacks
+app.use(xss());
+
+//whiteList: [<propertiesToExempt>]
+app.use(
+  hpp({
+    whiteList: [
+      'duration',
+      'ratingsQuantity',
+      'ratingsAverage',
+      'maxGroupSize',
+      'difficulty',
+      'price',
+    ],
+  })
+);
 
 //To serve static file(s) from local folder express.static(<path>);
 app.use(express.static(`${__dirname}/public`));
@@ -35,6 +78,11 @@ app.use(express.static(`${__dirname}/public`));
 //   <codeHere>
 //   next();
 //});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
 
 //CRUD operations - http methods; Stateless RESTful API -> all state is handled on the client.
 //Create - POST used to add new data to our database, data sent is on request parameter

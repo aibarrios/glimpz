@@ -12,9 +12,14 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "express": "^4.17.3",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^6.4.0",
+    "helmet": "^5.0.2",
+    "hpp": "^0.2.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.8",
-    "nodemailer": "^6.7.5"
+    "nodemailer": "^6.7.5",
+    "xss-clean": "^0.1.1"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
