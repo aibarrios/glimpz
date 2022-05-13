@@ -93,6 +93,35 @@ const tourSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  maxGroupSize: Number,
+  guides: [String],
+  startLocation: {
+    type: {
+      type: String,
+      default: 'Point',
+      enum: ['Point'],
+    },
+    coordinates: [Number],
+    address: String,
+    description: String,
+  },
+  locations: [
+    {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      description: String,
+      day: Number,
+    },
+  ],
+  secretTour: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 //Document Middleware //Note: runs before .save() and .create()
