@@ -6,6 +6,8 @@ const DB = process.env.DATABASE.replace(
   process.env.DATABASE_PASSWORD
 );
 
+const slugify = require('slugify');
+
 //We will be using mongoose.js an Object Data Mapper (ODM) for MongoDB-Node.js
 const mongoose = require('mongoose');
 //mongoose.connect('<database_uri>', {options});
@@ -26,10 +28,6 @@ const tourSchema = new mongoose.Schema({
     trim: true,
     maxlength: [40, 'Name must have less than or equal to 40 characters'],
     minlength: [10, 'Name too short'],
-  },
-  privateTour: {
-    type: Boolean,
-    default: false,
   },
   price: {
     type: Number,
@@ -94,7 +92,12 @@ const tourSchema = new mongoose.Schema({
     default: 0,
   },
   maxGroupSize: Number,
-  guides: [String],
+  guides: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+    },
+  ],
   startLocation: {
     type: {
       type: String,
@@ -122,21 +125,31 @@ const tourSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  slug: String,
 });
 
 //Document Middleware //Note: runs before .save() and .create()
 //tourSchema.pre('save', cbFunc(next){next()})
 //tourSchema.post('save', cbFunc(document, next){})
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
 
-//Query Middleware
+//Embedding / Denormalizing data
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromises);
+// });
+
 tourSchema.pre(/^find/, function (next) {
-  this.find({ privateTour: { $ne: true } });
+  this.find({ secretTour: { $ne: true } });
   next();
 });
 
 //Aggregation Middleware
 tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { privateTour: { $ne: true } } });
+  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
   next();
 });
 
