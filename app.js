@@ -27,6 +27,7 @@ const globalErrorHandler = require('./controllers/errorController');
 //Router modules
 const toursRouter = require('./routes/toursRouter');
 const usersRouter = require('./routes/usersRouter');
+const reviewsRouter = require('./routes/reviewsRouter');
 
 const app = express();
 
@@ -114,6 +115,7 @@ app.use((req, res, next) => {
 //app.use(<basePath>, <routerToBeApplied>);
 app.use('/api/v1/tours', toursRouter);
 app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/reviews', reviewsRouter);
 
 //Handles unhandled routes
 app.all('*', (req, res, next) => {
