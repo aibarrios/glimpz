@@ -1,6 +1,7 @@
 const User = require('./../models/usersModel');
 const catchAsync = require('./../utils/catchAsync');
 const AppError = require('./../utils/appError');
+const factory = require('./../utils/handlerFactory');
 
 const filterDocument = (document, ...allowedFields) => {
   const newDocument = {};
@@ -80,9 +81,4 @@ exports.updateUser = (req, res) => {
   });
 };
 
-exports.deleteUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'Not yet implemented',
-  });
-};
+exports.deleteUser = factory.deleteOne(User);

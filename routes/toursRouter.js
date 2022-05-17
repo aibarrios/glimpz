@@ -12,7 +12,11 @@ const {
 
 const { protect, restrictTo } = require('./../controllers/authController');
 
+const reviewsRouter = require('./../routes/reviewsRouter');
+
 const router = express.Router();
+
+router.use('/:tourId/reviews', reviewsRouter);
 
 //.param will search for the specified parameter in the url then perform the special middleware with 4 parameters (req,res,next,val)
 // router.param('id', checkID);

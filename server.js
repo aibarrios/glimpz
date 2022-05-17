@@ -21,6 +21,21 @@ const server = app.listen(port, () => {
   console.log(`Listening to port ${port}...`);
 });
 
+const DB = process.env.DATABASE.replace(
+  '<PASSWORD>',
+  process.env.DATABASE_PASSWORD
+);
+
+const mongoose = require('mongoose');
+
+mongoose
+  .connect(DB, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log(`Connected to the database...`))
+  .catch((error) => console.error(error.message));
+
 process.on('unhandledRejection', (err) => {
   console.error('UNHANDLED REJECTION! Shutting down...');
   console.error(err.name, err.message);
