@@ -60,15 +60,12 @@ const tourSchema = new mongoose.Schema(
       select: false, // To hide it from the output query
     },
     startDates: [Date],
-    rating: {
-      type: Number,
-      default: 4.5,
-    },
     ratingsAverage: {
       type: Number,
       default: 4.5,
       min: [1, 'Rating must be more than or equal to 1.0'],
       max: [5, 'Rating must be less than or equal to 5.0'],
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,

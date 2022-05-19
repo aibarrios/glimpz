@@ -12,7 +12,7 @@ exports.setTourAndUserId = (req, res, next) => {
 exports.checkReviewerId = catchAsync(async (req, res, next) => {
   const { id, role } = req.user;
   const review = await Review.findById(req.params.id);
-  const reviewerId = review.user[0]._id.toString();
+  const reviewerId = review.user._id.toString();
 
   if (!(id === reviewerId || role === 'admin')) {
     return next(

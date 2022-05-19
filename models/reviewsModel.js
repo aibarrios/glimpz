@@ -16,20 +16,16 @@ const reviewSchema = new mongoose.Schema(
       type: Date,
       default: Date.now(),
     },
-    tour: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Tour',
-        required: [true, 'Review must belong to a tour.'],
-      },
-    ],
-    user: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'User',
-        required: [true, 'Review must belong to a user.'],
-      },
-    ],
+    tour: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Tour',
+      required: [true, 'Review must belong to a tour.'],
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      required: [true, 'Review must belong to a user.'],
+    },
   },
   {
     toJSON: { virtuals: true },
@@ -72,19 +68,14 @@ reviewSchema.statics.calculateAverageRatings = async function (tourId) {
   }
 };
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.post('save', function () {
   this.constructor.calculateAverageRatings(this.tour);
 });
 
-reviewSchema.pre(/^findOneAnd/, async function (next) {
-  this.queryModel = await this.findOne();
-  next();
-});
-
-reviewSchema.post(/^findOneAnd/, async function () {
-  await this.queryModel.constructor.calculateAverageRatings(
-    this.queryModel.tour
-  );
+reviewSchema.post(/^findOneAnd/, async function (doc) {
+  await doc.constructor.calculateAverageRatings(doc.tour);
 });
 
 const Review = new mongoose.model('Review', reviewSchema);
