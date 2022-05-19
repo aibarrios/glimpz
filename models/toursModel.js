@@ -116,6 +116,10 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+//1 asc | -1 desc
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+
 //virtuals are used to show added field at the query result but don't persist at the database
 //Virtual populate
 tourSchema.virtual('reviews', {
