@@ -5,7 +5,6 @@ const {
   getAllUsers,
   updateMe,
   deleteMe,
-  createUser,
   getUser,
   updateUser,
   deleteUser,
@@ -33,11 +32,12 @@ router.route('/updatePassword').patch(protect, updatePassword);
 
 router.route('/updateMe').patch(protect, updateMe);
 router.route('/deleteMe').delete(protect, deleteMe);
-router.route('/').get(getAllUsers).post(createUser);
+router.route('/').get(getAllUsers);
+
 router
   .route('/:id')
   .get(getUser)
-  .patch(updateUser)
+  .patch(protect, restrictTo('admin'), updateUser)
   .delete(protect, restrictTo('admin'), deleteUser);
 
 module.exports = router;

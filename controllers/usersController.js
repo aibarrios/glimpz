@@ -11,18 +11,6 @@ const filterDocument = (document, ...allowedFields) => {
   return newDocument;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: {
-      users,
-    },
-  });
-});
-
 exports.updateMe = catchAsync(async (req, res, next) => {
   //Create error if user POST password data
   if (req.body.password || req.body.passwordConfirm) {
@@ -60,25 +48,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'Not yet implemented',
-  });
-};
-
-exports.createUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'Not yet implemented',
-  });
-};
-
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'fail',
-    message: 'Not yet implemented',
-  });
-};
-
+exports.getAllUsers = factory.getAll(User);
+exports.getUser = factory.getOne(User);
+exports.updateUser = factory.updateOne(User);
 exports.deleteUser = factory.deleteOne(User);

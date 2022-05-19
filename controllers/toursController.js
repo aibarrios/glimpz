@@ -1,39 +1,6 @@
-//App logic for tours router
-
 const Tour = require('./../models/toursModel');
-const APIFeatures = require('./../utils/apiFeatures.js');
 const catchAsync = require('./../utils/catchAsync');
-const AppError = require('./../utils/appError');
 const factory = require('./../utils/handlerFactory');
-
-//middleware to check body from POST request, must have both name and price
-// exports.checkBody = (req, res, next) => {
-//   const body = req.body;
-//   if (!(body.name && body.price)) {
-//     return res.status(400).json({
-//       status: 'fail',
-//       message: 'Bad request, missing some properties.',
-//     });
-//   }
-//   next();
-// };
-
-//Param middleware (req,res,next,val) => {next()}, check if the url have specific param
-// exports.checkID = (req, res, next, val) => {
-// req.params is where all variables (example: id) in the url are stored
-//Check if the ID number is within the range of available number of tours
-//-1 because it array starts with 0
-//We've multiplied it by 1 to coerce the id string type to number type
-//   if (req.params.id * 1 > tours.length - 1) {
-//     return res.status(404).json({
-//       status: 'fail',
-//       message: 'Invalid ID',
-//     });
-//   }
-//   next();
-// };
-
-//jsend format res.status(<statusCode>).json({status: 'success/fail', data: {<dataHere>}})
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -41,70 +8,6 @@ exports.aliasTopTours = (req, res, next) => {
   req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
   next();
 };
-
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  //Query
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limit()
-    .paginate();
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: 'success',
-    results: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
-
-exports.getTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews');
-
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-
-  if (!tour) {
-    return next(new AppError('No tour found with that ID', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
-exports.deleteTour = factory.deleteOne(Tour);
-
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
 
 //Aggregation
 exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
@@ -152,3 +55,9 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.getAllTours = factory.getAll(Tour);
+exports.getTour = factory.getOne(Tour, { path: 'reviews' });
+exports.createTour = factory.createOne(Tour);
+exports.updateTour = factory.updateOne(Tour);
+exports.deleteTour = factory.deleteOne(Tour);
