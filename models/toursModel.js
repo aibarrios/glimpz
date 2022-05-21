@@ -116,6 +116,7 @@ const tourSchema = new mongoose.Schema(
 //1 asc | -1 desc
 tourSchema.index({ price: 1, ratingsAverage: -1 });
 tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
 
 //virtuals are used to show added field at the query result but don't persist at the database
 //Virtual populate
@@ -154,10 +155,10 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 //Aggregation Middleware
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+// tourSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   next();
+// });
 
 //Creating new model = collection
 const Tour = new mongoose.model('Tour', tourSchema);

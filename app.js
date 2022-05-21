@@ -1,5 +1,7 @@
 //App related configuration here
 
+const path = require('path');
+
 //We will be using express.js
 const express = require('express');
 
@@ -30,6 +32,12 @@ const usersRouter = require('./routes/usersRouter');
 const reviewsRouter = require('./routes/reviewsRouter');
 
 const app = express();
+
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
+//To serve static file(s) from local folder express.static(<path>);
+app.use(express.static(path.join(__dirname, 'public')));
 
 //Request-Response Cycle: Incoming request -> Middleware Stack -> Response
 //Middleware -> a piece of code that can modify the request or response object, it occurs between the request and response event
@@ -71,9 +79,6 @@ app.use(
   })
 );
 
-//To serve static file(s) from local folder express.static(<path>);
-app.use(express.static(`${__dirname}/public`));
-
 //Creating custom middleware
 //app.use((req, res, next) => {
 //   <codeHere>
@@ -110,6 +115,10 @@ app.use((req, res, next) => {
 //404 Not Found - cannot find requested resource
 //Server error responses
 //500 Internal server error
+
+app.get('/', (req, res) => {
+  res.status(200).render('base');
+});
 
 //Mounting Routers
 //app.use(<basePath>, <routerToBeApplied>);
