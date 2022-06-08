@@ -7,8 +7,8 @@
     "start:dev": "nodemon server.js",
     "start:prod": "cross-env NODE_ENV=production nodemon server.js"
   },
-  "author": "AIBarrios",
-  "license": "ISC",
+  "author": "Alexander Irvin Barrios",
+  "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "express": "^4.17.3",

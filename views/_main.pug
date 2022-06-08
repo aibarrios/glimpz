@@ -1,0 +1,23 @@
+main.main
+    .card-container
+        .card
+            .card__header
+                .card__picture
+                    .card__picture-overlay &nbsp;
+                    img.card__picture-img(src="img/tour-1-cover.jpg", alt="Tour 1")
+                h3.heading-tertirary
+                    span= tour
+            .card_details
+                h4.card__sub-heading Easy 5-day tour
+                p.card_text Breathtaking
+                .card__data
+                    svg.card__icon
+                        use(xlink:href='img/icons.svg#icon-map-pin')
+                .card__footer
+                    p
+                        span.card__footer-value PHP #{price}
+                        span.card__footer-text per person
+                    p.card__ratings
+                        span.card__footer-value= ratingsAverage
+                        span.card__footer-text rating #{ratingCount}
+                    a.btn.btn--green.btn--small(href='#') Details
