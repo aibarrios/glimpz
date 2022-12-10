@@ -1,5 +1,6 @@
-//Server related configuration here @server.js
+// Server related configuration here @server.js
 
+// uncaughtException mean that an application is in undefined state
 process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT REJECTION! Shutting down...');
   console.error(err.name, err.message);
@@ -36,6 +37,7 @@ mongoose
   .then(() => console.log(`Connected to the database...`))
   .catch((error) => console.error(error.message));
 
+// unhandledRejection refers to a Promise is rejected but no handler is detected
 process.on('unhandledRejection', (err) => {
   console.error('UNHANDLED REJECTION! Shutting down...');
   console.error(err.name, err.message);
